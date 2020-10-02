@@ -1,7 +1,10 @@
+
 import 'package:flutter/material.dart';
 
-import './question.dart';
-import './answer.dart';
+
+
+import './quiz.dart';
+import 'result.dart';
 
 void main() => runApp(MyApp());
 
@@ -13,36 +16,78 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final questions = const [
+  final _questions = const [
     {
       'questionText': 'What\'s  your favorite color?',
-      'answers': ['Red', 'Blue', 'Black', 'White']
+      'answers': [
+        {'text':'White', 'score': 5},
+        {'text':'Red', 'score': 3},
+        {'text': 'Black', 'score':10},
+        {'text': 'Blue', 'score': 1}
+         ]
     },
+      {
+      'questionText': 'What\'s  your favorite Animal?',
+      'answers': [
+        {'text':'Rabbit', 'score': 1},
+        {'text':'Dog', 'score': 3},
+        {'text': 'Snake', 'score':9},
+        {'text': 'Lion', 'score': 8}
+         ]
+    },
+
     {
-      'questionText': 'Who makes you laugh the most?',
-      'answers': ['Mustaf', 'Mustafa', 'Mostapha', 'Mustapha']
+      'questionText': 'Who makes you laugh the most ?',
+      'answers': [
+        {'text':'Mustaf', 'score': 1},
+        {'text':'Mustafa', 'score': 1},
+        {'text': 'Mostapha', 'score':1},
+        {'text': 'Mustapha', 'score': 1},
+        ]
     },
     {
       'questionText': 'What\'s  your  favorite team ?',
-      'answers': ['Chelsea', 'Man United', 'Real Madrid', 'Barcelona']
+      'answers': [
+        {'text':'Chelsea', 'score': 1},
+        {'text':'Man United', 'score': 10},
+        {'text': 'Real Madrid', 'score':5},
+        {'text': 'Barcelona', 'score': 8},
+
+        ]
     },
     {
-      'questionText': 'What\'s is your favorite Subject',
-      'answers': ['Math', 'Physics', 'Biology', 'Chemistry']
+      'questionText': 'What\'s is your favorite Subject ?',
+      'answers': [
+        {'text':'Biology', 'score': 3},
+        {'text':'Physics', 'score': 1},
+        {'text': 'Math', 'score':9},
+        {'text': 'Chemistry', 'score': 1},
+        ]
     },
   ];
   var _questionIndex = 0;
-  void _answerChosen() {
+  var _totalScore = 0;
+   void resetQuiz(){
+    setState(() {
+      _questionIndex = 0;
+      _totalScore = 0;
+      
+    });
+  }
+  void _answerChosen(int score) {
+    _totalScore += score;
     setState(() {
       _questionIndex += 1;
       print(_questionIndex);
     });
-    if (_questionIndex < questions.length) {
+    if (_questionIndex < _questions.length) {
       print('we have More questions');
     } else {
       print('No more questions');
     }
   }
+ 
+
 
   @override
   Widget build(BuildContext context) {
@@ -59,45 +104,10 @@ class _MyAppState extends State<MyApp> {
           title: Text('Welcome to my page Mustaf'),
         ),
         body: Container(
-            child: _questionIndex < questions.length
-                ? Column(
-                    children: [
-                      Question(questions[_questionIndex]['questionText']),
-                      ...(questions[_questionIndex]['answers'] as List<String>)
-                          .map((answer) {
-                        return Answer(_answerChosen, answer);
-                      }).toList(),
-
-                      //  Answer(_answerChosen),
-                      //  Answer(_answerChosen),
-                      //  Answer(_answerChosen),
-                      // RaisedButton(
-                      //   child: Text('Answer 1'),
-                      //   onPressed: answerChosen),
-                      // RaisedButton(
-                      //   child: Text('Answer 2'),
-                      //   onPressed: answerChosen),
-                      // RaisedButton(
-                      //   child: Text('Answer 3'),
-                      //   onPressed: answerChosen),
-                    ],
-                  )
-                : Container(
-                    width: double.infinity,
-                    margin: EdgeInsets.all(20),
-                    child: Column(
-                      children: [
-                        Center(
-                          child: Image.network(
-                              'https://scontent.famm6-1.fna.fbcdn.net/v/t1.0-9/88123663_2867214479988590_2183669726721343488_n.jpg?_nc_cat=108&_nc_sid=09cbfe&_nc_ohc=g-p7ntI04IUAX8Nnyfu&_nc_ht=scontent.famm6-1.fna&oh=d697aa3cd3e573aa9cea96e960fba516&oe=5F97B949'),
-                        ),
-                        Text(
-                          'Thank you for answering!!',
-                          style: TextStyle(fontSize: 28, color: Colors.black87),
-                        )
-                      ],
-                    ),
-                  )),
+            child: _questionIndex < _questions.length
+                ? Quiz(questions: _questions, questionIndex: _questionIndex, answerChosen: _answerChosen)
+                : Result(_totalScore, resetQuiz)
+                  ),
       ),
     );
   }
